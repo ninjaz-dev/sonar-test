@@ -19,6 +19,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
+          tools: php-parallel-lint, phpcs, phpstan
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
@@ -40,6 +41,12 @@ jobs:
         run: |
           mkdir -p database
           touch database/database.sqlite
+      - name: PHP Parallel Lint
+        run: vendor/bin/parallel-lint --exclude vendor .
+      - name: PHP CodeSniffer
+        run: vendor/bin/phpcs
+      - name: PHPStan
+        run: vendor/bin/phpstan analyse
       - name: Execute tests (Unit and Feature tests) via PHPUnit
         env:
           DB_CONNECTION: sqlite
